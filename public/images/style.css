@@ -1,0 +1,18 @@
+
+body {
+	height: ;
+	width: ;
+	background: #19456b;
+}
+
+.container {
+	height: 500px;
+	width: 400px;
+	background: #19456b;
+}
+
+.book {
+	position: fixed;
+	height: 300px;
+	width: 300px;
+}
