@@ -5,6 +5,10 @@
         
         body {
             padding-bottom: 90px;
+            background-color: #334a62;
+            background: url("{{ asset('images/conversation.jpg') }}");
+            background-size: cover;
+            background-attachment: fixed
         }
 
         .bottom-nav {
@@ -36,6 +40,49 @@
         .start-quiz:hover {
             text-decoration: none;
         }
+
+        span.pagsusulit::after {
+            content: 'Magsimula sa Pagsusulit'
+        }
+
+        .bottom-nav {
+            background: url("{{ asset('images/halaman.jpg') }}");
+            background-position: bottom;
+        }
+
+        .__btn.restart {
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 19px;
+        }
+
+        @media only screen and (max-width: 1000px){
+            .paper {
+                padding: 41px 16px;
+            }
+
+            .paper {
+                margin: 25px 10px;
+            }
+        }
+
+        @media only screen and (max-width: 460px){
+            .paper {
+                padding: 41px 16px;
+            }
+
+            .paper {
+                margin: 25px 10px;
+            }
+
+            .bottom-nav--right > a { font-size: 10px; }
+
+            span.pagsusulit::after {
+                content: 'Pagsusulit'
+            }
+        }
     </style>
 @endpush
 @section('content')
@@ -43,12 +90,13 @@
         <h2 class="text-center">{{ $story->title }}</h2>
         {!! $story->body !!}
     </div>
+    {{-- <img src="{{ asset('images') }}" alt=""> --}}
 @endsection
 @push('bottom-nav')
     <div class="bottom-nav">
         <div class="container">
             <div class="bottom-nav--left">
-                <div id="audio-play-pause-btn" class="btn play">
+                <div id="audio-play-pause-btn" class="__btn play">
                     <span class="bar bar-1"></span>
                     <span class="bar bar-2"></span>				
                 </div>
@@ -57,8 +105,13 @@
                     Your browser does not support the audio element.
                 </audio>
             </div>
+            <div class="bottom-nav--left ml-3">
+                <div id="audio-play-pause-btn" class="__btn restart">
+                    <i class="fa fa-step-backward"></i>
+                </div>
+            </div>
             <div class="bottom-nav--right">
-                <a href="{{ route('story.selection') }}" class="start-quiz mr-3">
+                <a href="{{ route('library') }}" class="start-quiz mr-3">
                     Bumalik
                 </a>
                 @if(isset($quiz_status) && $quiz_status == "done")
@@ -67,12 +120,17 @@
                     </a>
                 @else
                     <a href="{{ route('story.quiz', $story->id) }}" class="start-quiz">
-                        Magsimula sa Pagsusulit
+                        <span class="pagsusulit"></span>
                     </a>
                 @endif
             </div>
         </div>
     </div>
+    @include('components.instructions', [
+        'instructions' => 'Basahin mabuti ang kwento. I-click ang play button sa ibabang bahagi ng pahinang ito para mapakinggan ang kwento. I-click ang kalapit ng button para ulitin ang kwento.',
+        'display_on_load' => true,
+        'page' => 'library'
+    ])
 @endpush
 @push('custom-js')
     <script>
@@ -100,6 +158,11 @@
                 isAudioPlaying = true;
                 player.play();
             }
+        });
+
+        $('.restart').click(function(e){
+            e.preventDefault();
+            player.currentTime = 0;
         });
     </script>
 @endpush

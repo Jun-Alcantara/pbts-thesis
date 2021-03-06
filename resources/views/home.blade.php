@@ -40,23 +40,6 @@
             <h3>Jun Alcantara</h3>
             <h5>Grade 5 - Section 1</h5>
         </div>
-        {{-- <div class="story-list col-lg-8 col-sm-12">
-            @foreach($stories as $story)
-                <a href="{{ route("story.read", $story->id) }}">
-                    <div class="story-item">
-                        <h4>{{ $story->title }}</h4>
-                        @php
-
-                            $result = \App\Models\QuizResult::where('story_id', $story->id)->where('user_id', \Auth::user()->id)->first();
-
-                        @endphp
-                        @if($result)
-                            <h5 class="text-success">Completed: {{ $result->points }}/{{ count($story->Questions) }}</h5>
-                        @endif
-                    </div>
-                </a>
-            @endforeach
-        </div> --}}
     </div>
     <div id="story-items-container" class="d-flex justify-content-around flex-wrap">
         @foreach($stories as $story)

@@ -50,34 +50,67 @@ class UpdateStory extends Controller
         if( isset( $request->question ) ){
             foreach ($request->question as $nquestion) {
 
-                $question = StoryQuestion::find($nquestion['question_id']);
-
-                if (empty($question)) {
+                if( isset($nquestion['removed']) && trim( $nquestion['removed'] ) == "yes" ){
+                    StoryQuestion::find( intval($nquestion['question_id']) )->delete();
                     continue;
                 }
 
-                $question->question = $nquestion['question'];
-                $question->save();
+                if( isset( $nquestion['question_id'] ) ){ # Update Question
+                    $question = StoryQuestion::find($nquestion['question_id']);
 
-                $index = 1;
-                $choices = $nquestion['choices'];
-                foreach ($choices as $cid => $answer) {
-
-                    $correct = 0;
-                    if ($nquestion['correct'] == $index) {
-                        $correct = 1;
+                    if (empty($question)) {
+                        continue;
                     }
 
-                    $choice = StoryQuestionAnswer::find($cid);
-                    $choice->answer = $answer;
-                    $choice->is_correct = $correct;
-                    $choice->save();
+                    $question->question = $nquestion['question'];
+                    $question->save();
 
-                    $index++;
+                    $index = 1;
+                    $choices = $nquestion['choices'];
+                    foreach ($choices as $cid => $answer) {
+
+                        $correct = 0;
+                        if ($nquestion['correct'] == $index) {
+                            $correct = 1;
+                        }
+
+                        $choice = StoryQuestionAnswer::find($cid);
+                        $choice->answer = $answer;
+                        $choice->is_correct = $correct;
+                        $choice->save();
+
+                        $index++;
+                    }
+                }else{ # Add Question
+                    $question = new StoryQuestion([
+                            'stories_id' => $story->id,
+                            'question' => $nquestion['question']
+                        ]);
+                    $question->save();
+
+                    $index = 1;
+                    foreach ($nquestion['choices'] as $answer) {
+
+                        $correct = 0;
+                        if ($nquestion['correct'] == $index) {
+                            $correct = 1;
+                        }
+
+                        $choice = new StoryQuestionAnswer([
+                            'story_questions_id' => $question->id,
+                            'answer' => $answer,
+                            'is_correct' => $correct
+                        ]);
+                        $choice->save();
+
+                        $index++;
+                    }
                 }
+
             }
         }
 
+        return back();
         return redirect()->route('stories.list');
     }
 }

@@ -36,7 +36,7 @@
                     @endif
                     <div class="form-group">
                         <label for="title" class="required">Cover</label>
-                        <input type="file" class="" name="cover_photo" accept="image/x-png,image/gif,image/jpeg" required/>
+                        <input type="file" class="" name="cover_photo" accept="image/x-png,image/gif,image/jpeg"/>
                     </div>
                     @if( $story->cover_photo )
                     <div>
@@ -47,13 +47,14 @@
                     <div id="questions-container">
                         @foreach($story->Questions as $q)
                             @php $index = uniqid(); @endphp
-                            <div id="question${index}" class="question well well-sm">
+                            <div id="question{{ $index }}" class="question well well-sm">
                                 <label for="title" class="required question-label">Question {{ $loop->index + 1 }}</label>
                                 <a href="#" class="float-right remove-question-btn" data-target="#question{{ $index }}">
                                     [Remove]
                                 </a>
                                 <input type="text" class="form-control" name="question[{{ $index }}][question]" value="{{ old('title', $q->question) }}" required>
                                 <input type="hidden" name="question[{{ $index }}][question_id]" value="{{ old('title', $q->id) }}">
+                                <input class="removed" type="hidden" name="question[{{ $index }}][removed]" value="no">
                                 <br>
                                 <label for="Choices">Choices</label>
                                 @foreach($q->MultipleChoices as $c)
@@ -96,7 +97,7 @@
             let container = $('#questions-container')
 
             let template = `
-                <div id="question${index}" class="question well well-sm">
+                <div id="question${index}" class="question well well-sm added">
                     <label for="title" class="required question-label">Question</label>
                     <a href="#" class="float-right remove-question-btn" data-target="#question${index}">
                         [Remove]
@@ -105,19 +106,19 @@
                     <br>
                     <label for="Choices">Choices</label>
                     <div class="position-relative">
-                        <input type="text" class="form-control" name="question[${index}][choices][]" placeholder="Answer 1">
+                        <input type="text" class="form-control" name="question[${index}][choices][]" placeholder="Answer 1" required>
                         <input type="radio" class="position-absolute" name="question[${index}][correct]" value="1" style="right: 21px; top: 7px;" checked>
                     </div>
                     <div class="position-relative">
-                        <input type="text" class="form-control" name="question[${index}][choices][]" placeholder="Answer 2">
+                        <input type="text" class="form-control" name="question[${index}][choices][]" placeholder="Answer 2" required>
                         <input type="radio" class="position-absolute" name="question[${index}][correct]" value="2" style="right: 21px; top: 7px;">
                     </div>
                     <div class="position-relative">
-                        <input type="text" class="form-control" name="question[${index}][choices][]" placeholder="Answer 3">
+                        <input type="text" class="form-control" name="question[${index}][choices][]" placeholder="Answer 3" required>
                         <input type="radio" class="position-absolute" name="question[${index}][correct]" value="3" style="right: 21px; top: 7px;">
                     </div>
                     <div class="position-relative">
-                        <input type="text" class="form-control" name="question[${index}][choices][]" placeholder="Answer 4">
+                        <input type="text" class="form-control" name="question[${index}][choices][]" placeholder="Answer 4" required>
                         <input type="radio" class="position-absolute" name="question[${index}][correct]" value="4" style="right: 21px; top: 7px;">
                     </div>
                 </div>
@@ -129,7 +130,16 @@
 
         $(document).on("click", ".remove-question-btn", function(e){
             e.preventDefault();
-            $( $(this).data('target') ).remove()
+
+            if( $( $(this).data('target') ).hasClass("added") ){
+                $( $(this).data('target') ).remove()
+            }else{
+                $( $(this).data('target') ).hide()
+            }
+            
+            $( $(this).data('target') + " > .question-label" ).removeClass("question-label")
+            $( $(this).data('target') + " > .removed" ).val("yes")
+
             updateLabels()
         });
 

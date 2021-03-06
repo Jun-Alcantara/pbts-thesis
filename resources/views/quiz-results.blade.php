@@ -7,6 +7,11 @@
 
         body {
             padding-bottom: 90px;
+            background-color: #334a62;
+            background: url("{{ asset('images/conversation.jpg') }}");
+            background-size: cover;
+            background-attachment: fixed;
+            padding-bottom: 90px;
         }
 
         .bottom-nav {
@@ -30,12 +35,29 @@
             flex-grow: 1;
         }
 
-        #submit-answers {
+        .submit-answers {
             color: white;
             background-color: #0f3057;
             padding: 13px;
             border-radius: 7px;
             border: none;
+        }
+
+        .text-yellow { color: #de9000; }
+
+        .bottom-nav {
+            background: url("{{ asset('images/halaman.jpg') }}");
+            background-position: bottom;
+        }
+        
+        @media only screen and (max-width: 768px){
+            .paper {
+                padding: 41px 16px;
+            }
+
+            .paper {
+                margin: 25px 10px;
+            }
         }
     </style>
 @endpush
@@ -77,9 +99,9 @@
             @endforeach
             <p>
                 <span>
-                    Puntos: {{ $result->points }} <br>
-                    Tagal: {{ $result->duration }} <br>
-                    Oras at Araw: {{ date('F d, Y', strtotime($result->created_at)) }}
+                    <i class="fa fa-star text-yellow"></i> Puntos: {{ $result->points }} <br>
+                    <i class="fa fa-star text-yellow"></i> Tagal: {{ $result->duration }} <br>
+                    <i class="fa fa-star text-yellow"></i> Oras at Araw: {{ date('F d, Y', strtotime($result->created_at)) }}
                 </span>
             </p>
         </div>
@@ -94,7 +116,14 @@
                     </div> --}}
                 </div>
                 <div class="right d-flex justify-content-end">
-                    <a href="{{ route('story.read', $story->id) }}" type="submit" id="submit-answers">
+                    @if( $retake_count > 0 )
+                    <a href="{{ route('story.quiz.retake', $story->id) }}" class="submit-answers mr-2">
+                        <i class="fa fa-refresh"></i>
+                        Ulitin ({{ $retake_count }})
+                    </a>
+                    @endif
+                    <a href="{{ route('story.read', $story->id) }}" type="submit" class="submit-answers">
+                        <i class="fa fa-arrow-left"></i>
                         Bumalik
                     </a>
                 </div>

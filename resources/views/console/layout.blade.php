@@ -2,6 +2,7 @@
 <html>
     <head>
         <meta charset=UTF-8>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{{ $title ?? "Basa Muna" }}</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="{{ asset('css/app.css') }}">
@@ -10,7 +11,9 @@
         <script src="https://cdn.tiny.cloud/1/wrlgzin2ws9a25x7d0gbzry4ijs2m63m2u2vmju6lex9ipgd/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
         <script>
             tinymce.init({
-                selector: '#tinyMCE'
+                selector: '#tinyMCE',
+                images_upload_url: 'postAcceptor.php',
+                automatic_uploads: false
             });
         </script>
         @stack('custom-css')
@@ -76,6 +79,21 @@
                 <li class="nav-item">
                     <a class="nav-link {{ (isset($active_tab) && $active_tab == "users") ? "active" : "" }}" href="{{ route('users.list') }}">
                         <i class="fa fa-users"></i> Users
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ (isset($active_tab) && $active_tab == "task") ? "active" : "" }}" href="{{ route('task.edit') }}">
+                        <i class="fa fa-list"></i> Tasks
+                    </a>
+                </li>
+                {{-- <li class="nav-item">
+                    <a class="nav-link {{ (isset($active_tab) && $active_tab == "instructions") ? "active" : "" }}" href="{{ route('instructions.list') }}">
+                        <i class="fa fa-list"></i> Instructions
+                    </a>
+                </li> --}}
+                <li class="nav-item">
+                    <a class="nav-link {{ (isset($active_tab) && $active_tab == "aboutus") ? "active" : "" }}" href="{{ route('aboutus.edit') }}">
+                        <i class="fa fa-list"></i> About Us
                     </a>
                 </li>
             </ul>

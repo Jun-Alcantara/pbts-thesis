@@ -7,15 +7,20 @@
 
         body {
             padding-bottom: 90px;
+            background-color: #334a62;
+            background: url("{{ asset('images/conversation.jpg') }}");
+            background-size: cover;
+            background-attachment: fixed
         }
 
         .bottom-nav {
             width: 100%;
             padding: 10px;
-            background-color: white;
             position: fixed;
             bottom: 0;
             left: 0;
+            background: url("{{ asset('images/halaman.jpg') }}");
+            background-position: bottom;
         }
 
         .bottom-nav > .container {
@@ -37,6 +42,16 @@
             border-radius: 7px;
             border: none;
         }
+
+        @media only screen and (max-width: 768px){
+            .paper {
+                padding: 41px 16px;
+            }
+
+            .paper {
+                margin: 25px 10px;
+            }
+        }
     </style>
 @endpush
 @section('content')
@@ -48,7 +63,8 @@
             @foreach($questions as $q)
                 <div class="q">
                     {{ $loop->index + 1 }}.) {!! $q->question !!}
-                    @foreach($q->MultipleChoices as $c)
+                    @php $choices = optional( $q->MultipleChoices ) @endphp
+                    @foreach($choices->all() as $c)
                         <div class="form-check d-flex">
                             <div class="d-flex justify-content-center align-items-center" style="min-width: 28px;">
                                 <input class="form-check-input" type="radio" name="answer[{{ $q->id }}]" id="exampleRadios1" value="{{ $c->id }}" required>
@@ -81,6 +97,11 @@
             </div>
         </div>
     </form>
+    @include('components.instructions', [
+        'instructions' => 'Basahin mabuti ang kwento. I-click ang play button sa ibabang bahagi ng pahinang ito para mapakinggan ang kwento. I-click ang kalapit ng button para ulitin ang kwento.',
+        'display_on_load' => true,
+        'page' => 'quiz'
+    ])
 @endsection
 @push('custom-js')
     <script>
@@ -90,7 +111,8 @@
 
         submit_button.click(function(e){
             e.preventDefault()
-            formsubmitbutton.click();
+            console.log("TEST");
+            quizform.submit();
         });
 
         $(document).ready(function(){

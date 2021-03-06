@@ -11,8 +11,12 @@ body {
     background-color: #0f3057;
 }
 
+a:hover, a:focus {
+    text-decoration: none;;
+}
+
 #app {
-    background-color: #AF0069;
+    background-color: #4d6147;
     border: 5px solid #c7753d;
     border-radius: 10px;
     min-height: 500px;
@@ -244,6 +248,10 @@ h4:hover {
     #story-items-container > div {
         flex: 0 48%;
     }
+
+    .story-thumbnail {
+        max-height: 140px;
+    }
 }
 
 @media only screen and (max-width: 400px) {
@@ -253,9 +261,87 @@ h4:hover {
 }
 
 .story-title-container {
-    min-height: 60px;
-    max-height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    min-height: 52px;
+    max-height: 52px;
+    overflow: hidden;
+   text-overflow: ellipsis;
+   display: -webkit-box;
+   -webkit-line-clamp: 2; /* number of lines to show */
+   -webkit-box-orient: vertical;
+}
+
+.user-info--name {
+    font-size: 17px;
+}
+
+/* The Modal (background) */
+.modal {
+    display: none;
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.custom-modal-content {
+    background-color: #4d6147 !important;
+    margin: auto;
+    padding: 20px;
+    border: 5px solid #c7753d !important;
+    width: 80%;
+    color: white !important;
+}
+
+.custom-modal-content > h3 {
+    margin: 0;
+}
+
+a.close-btn {
+    color: white;
+    border: 1px solid white;
+    padding: 10px 20px;
+    margin-top: 10px;
+    border-radius: 5px;
+    display: block;
+    text-align: center;
+}
+
+a.close-btn:hover {
+    text-decoration: none;
+    color: white;
+}
+
+a.close-on-this-device {
+    color: white;
+    border: 1px solid white;
+    padding: 10px 20px;
+    margin-top: 10px;
+    border-radius: 5px;
+    display: block;
+    text-align: center;
+}
+
+a.close-on-this-device:hover {
+    text-decoration: none;
+    color: white;
+}
+
+@media only screen and (min-width: 800px){
+    .custom-modal-content{
+        margin-top: 100px !important;
+    }
+
+    a.close-btn {
+        display: inline-block;
+    }
+
+    a.close-on-this-device {
+        display: inline-block;
+    }
 }

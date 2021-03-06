@@ -8,6 +8,7 @@ use App\Models\StoryQuestionAnswer;
 use App\Models\QuizResult;
 use App\Models\QuizAnswer;
 use App\Models\StoryQuestion;
+use App\Models\QuizRetakeCount;
 use Auth, DB;
 
 class ReadStory extends Controller
@@ -35,6 +36,8 @@ class ReadStory extends Controller
 
     public function assess(Request $request, Story $story)
     {
+        if( !isset( $request->answer ) ) return back();
+
         $answers = $request->answer;
         $quiz_answers = [];
 
@@ -59,7 +62,7 @@ class ReadStory extends Controller
                 'user_id' => Auth::user()->id ?? 0,
                 'story_id' => $story->id,
                 'points' => $points,
-                'number_of_question' => 0,
+                'number_of_question' => count($story->Questions),
                 'duration' => $request->time
             ]);
             $quiz_result->save();
@@ -81,17 +84,62 @@ class ReadStory extends Controller
     public function result(Story $story)
     {
         $data['story'] = $story;
-        $data['questions'] = StoryQuestion::where('stories_id', $story->id)
-                        ->select('story_questions.id', 'question', 'points', 'user_answer')
-                        ->join('quiz_results as qr', 'qr.story_id', 'story_questions.stories_id')
-                        ->join('quiz_answers as qa', function($join){
-                            $join->on('qa.quiz_result_id', 'qr.id')
-                                ->on('story_questions.id', 'qa.story_question_id');
-                        })
-                        ->get();
 
-        $data['result'] = QuizResult::where('user_id', Auth::user()->id)->where('story_id', $story->id)->first();
+        $data['result'] = $result = QuizResult::where('user_id', Auth::user()->id)->where('story_id', $story->id)->first();
+
+        $questions = StoryQuestion::select('id', 'question')->where('stories_id', $story->id)->get();
+        $data['questions'] = $questions->each(function($question) use ($result){
+
+            $user_answer = QuizAnswer::where('quiz_result_id', $result->id)->where('story_question_id', $question->id)->first();
+            if( !$user_answer ){
+                return $question->answer = null;
+            }
+
+            return $question->user_answer = $user_answer->user_answer;
+
+        });
+
+        $data['retake_count'] = 2;
+        $retake = QuizRetakeCount::where('story_id', $story->id)
+                    ->where('user_id', Auth::user()->id)
+                    ->first();
+        
+        if( !empty( $retake ) ){
+            $data['retake_count'] = $retake->retake_count ?? 0;
+        }
         
         return view('quiz-results', $data);
-    }  
+    }
+
+    public function retake(Story $story)
+    {
+        DB::transaction(function() use ($story){
+            $quiz_result = QuizResult::where('story_id', $story->id)
+                ->where('user_id', \Auth::user()->id)
+                ->first();
+
+            $quiz_ans = QuizAnswer::where('quiz_result_id', $quiz_result->id)->delete();
+
+            QuizResult::where('story_id', $story->id)
+                ->where('user_id', Auth::user()->id)->delete();
+
+            $retake = QuizRetakeCount::where('story_id', $story->id)
+                            ->where('user_id', Auth::user()->id)
+                            ->first();
+
+            if( empty( $retake ) ){
+                $retake = QuizRetakeCount::create([
+                    'user_id' => Auth::user()->id,
+                    'story_id' => $story->id,
+                    'retake_count' => 2
+                ]);
+            }
+
+            $retake->retake_count = intval($retake->retake_count) - 1;
+
+            $retake->save();
+        });
+
+        return redirect()->route('story.quiz', $story->id);
+    }
 }

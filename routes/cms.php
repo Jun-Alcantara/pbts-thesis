@@ -14,3 +14,11 @@ Route::post('/users/save', Console\User\SaveUser::class)->name('users.save');
 Route::get('/users/{user}/hOkexhysw3', Console\User\Deleteuser::class)->name('users.delete');
 Route::get('users/{user}/edit', Console\User\EditUser::class)->name('users.edit');
 Route::post('users/{user}/update', Console\User\UpdateUser::class)->name('users.update');
+
+Route::get('/tasks', Console\Task\Edit::class)->name('task.edit');
+Route::post('/tasks', Console\Task\Update::class)->name('task.update');
+
+Route::get('/about-us', Console\AboutUs\Edit::class)->name('aboutus.edit');
+Route::post('/about-us', Console\AboutUs\Update::class)->name('aboutus.update');
+
+Route::get('/instructions', Console\Instructions\Pages::class)->name('instructions.list');
